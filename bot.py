@@ -9,6 +9,9 @@ from pyrogram.enums import ParseMode
 import sys
 from datetime import datetime
 
+import threading, time, logging
+import asyncio
+
 from config import API_HASH, APP_ID, LOGGER, TG_BOT_TOKEN, TG_BOT_WORKERS, FORCE_SUB_CHANNEL, CHANNEL_ID, PORT
 
 class Bot(Client):
@@ -25,6 +28,25 @@ class Bot(Client):
         )
         self.LOGGER = LOGGER
 
+logging.basicConfig(level=logging.INFO)
+
+def keep_awake():
+    """Logs a message every 5 minutes to prevent Koyeb autosleep."""
+    while True:
+        logging.info("Bot is running...")  # Log in Koyeb logs
+        time.sleep(300)
+
+# Start the keep-awake thread
+threading.Thread(target=keep_awake, daemon=True).start()
+
+async def main():
+    bot = Bot()
+    await bot.start()
+    await asyncio.Event().wait()  # Keep running indefinitely
+
+if __name__ == "__main__":
+    
+    asyncio.run(main())
     async def start(self):
         await super().start()
         usr_bot_me = await self.get_me()
