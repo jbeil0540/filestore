@@ -94,4 +94,7 @@ async def main():
     await asyncio.Event().wait()  # Keep running indefinitely
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.get_event_loop().run_until_complete(main())  # ✅ Safe alternative
+    except KeyboardInterrupt:
+        logging.info("Bot stopped manually.")
