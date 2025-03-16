@@ -28,7 +28,7 @@ class Bot(Client):
         )
         self.LOGGER = LOGGER        
     
-      # asyncio.run(main()). move this lind in the end for uptime
+    async def start(self):
         await super().start()
         usr_bot_me = await self.get_me()
         self.uptime = datetime.now()
