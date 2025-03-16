@@ -8,11 +8,10 @@ from pyrogram import Client
 from pyrogram.enums import ParseMode
 import sys
 from datetime import datetime
-
-import threading, time, logging
-import asyncio
-
+import threading, time, logging #for uptime
 from config import API_HASH, APP_ID, LOGGER, TG_BOT_TOKEN, TG_BOT_WORKERS, FORCE_SUB_CHANNEL, CHANNEL_ID, PORT
+
+logging.basicConfig(level=logging.INFO) #for uptime
 
 class Bot(Client):
     def __init__(self):
@@ -26,25 +25,7 @@ class Bot(Client):
             workers=TG_BOT_WORKERS,
             bot_token=TG_BOT_TOKEN
         )
-        self.LOGGER = LOGGER
-
-logging.basicConfig(level=logging.INFO)
-
-def keep_awake():
-    """Logs a message every 5 minutes to prevent Koyeb autosleep."""
-    while True:
-        logging.info("Bot is running...")  # Log in Koyeb logs
-        time.sleep(300)
-
-# Start the keep-awake thread
-threading.Thread(target=keep_awake, daemon=True).start()
-
-async def main():
-    bot = Bot()
-    await bot.start()
-    await asyncio.Event().wait()  # Keep running indefinitely
-
-if __name__ == "__main__":
+        self.LOGGER = LOGGER        
     
     asyncio.run(main())
     async def start(self):
@@ -96,3 +77,11 @@ if __name__ == "__main__":
     async def stop(self, *args):
         await super().stop()
         self.LOGGER(__name__).info("Bot stopped.")
+
+    def keep_awake():
+        while True:
+            logging.info("Bot is running...")
+            time.sleep(300)
+
+# Start the keep-awake thread
+threading.Thread(target=keep_awake, daemon=True).start()
