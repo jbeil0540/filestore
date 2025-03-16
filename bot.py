@@ -9,6 +9,7 @@ from pyrogram.enums import ParseMode
 import sys
 from datetime import datetime
 import threading, time, logging #for uptime
+import asyncio #for uptime
 from config import API_HASH, APP_ID, LOGGER, TG_BOT_TOKEN, TG_BOT_WORKERS, FORCE_SUB_CHANNEL, CHANNEL_ID, PORT
 
 logging.basicConfig(level=logging.INFO) #for uptime
@@ -27,8 +28,7 @@ class Bot(Client):
         )
         self.LOGGER = LOGGER        
     
-    asyncio.run(main())
-    async def start(self):
+      # asyncio.run(main()). move this lind in the end for uptime
         await super().start()
         usr_bot_me = await self.get_me()
         self.uptime = datetime.now()
@@ -78,10 +78,20 @@ class Bot(Client):
         await super().stop()
         self.LOGGER(__name__).info("Bot stopped.")
 
-    def keep_awake():
-        while True:
-            logging.info("Bot is running...")
-            time.sleep(300)
+# Keep bot alive (Koyeb)
+def keep_awake():
+    while True:
+        logging.info("Bot is running...")
+        time.sleep(300)
 
-# Start the keep-awake thread
+# Start keep-alive thread
 threading.Thread(target=keep_awake, daemon=True).start()
+
+# Start the bot
+async def main():
+    bot = Bot()
+    await bot.start()
+    await asyncio.Event().wait()  # Keep running indefinitely
+
+if __name__ == "__main__":
+    asyncio.run(main())
